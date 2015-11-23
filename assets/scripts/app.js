@@ -1,5 +1,5 @@
-var $button = $('button');
-$button.on('click', function(event) {
+var $beerMe = $('button');
+$beerMe.on('click', function(event) {
   event.preventDefault();
   var $cityInput = $('#city');
   var city = $cityInput.val();
@@ -31,6 +31,7 @@ function getList(city, state) {
   var search = 'https://jsonp.afeld.me/?url=http%3A%2F%2Fapi.brewerydb.com%2Fv2%2Flocations%3Fkey%3D0d28b6999d59c70e170fb29165a647d2%26locality%3D' + city + '%26region%3D' + state;
   $.get(search, function(object) {
     var brewArr = object.data;
+    console.log(brewArr);
     listing(brewArr);
   });
 }
@@ -41,6 +42,7 @@ function listing(arr) {
   var length = arr.length;
   for (var i = 0; i < length; i++) {
     var brewNames = arr[i].brewery.name;
+    var brewID = arr[i].breweryId;
     var type = arr[i].locationTypeDisplay;
     var address = arr[i].streetAddress;
     var zip = arr[i].postalCode;
@@ -50,24 +52,61 @@ function listing(arr) {
     var mapInfo = [{lat: brewLat, lng: brewLong}, brewNames];
     coordArr.push(mapInfo);
   }
-  showMap(lat, long, coordArr);
+  showMap(lat, long);
 }
 
-function showMap(lat, long, arr) {
+var markers = [];
+var map;
+
+function showMap(lat, long) {
   var mapCanvas = document.getElementById('map');
   var mapOptions = {
     center: new google.maps.LatLng(lat, long),
-    zoom: 13,
+    zoom: 12,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
-  var map = new google.maps.Map(mapCanvas, mapOptions);
+  map = new google.maps.Map(mapCanvas, mapOptions);
+  drop(coordArr);
+}
+
+function drop(arr) {
+  clearMarkers();
   var length = arr.length;
   for (var j = 0; j < length; j++) {
-    var marker = new google.maps.Marker({
-      position: arr[j][0],
-      map: map,
-      animation: google.maps.Animation.DROP,
-      title: arr[j][1]
-    });
+    addMarkerWithTimeout(arr[j][0], arr[j][1], j * 75);
   }
 }
+
+function addMarkerWithTimeout(position, title, timeout) {
+  window.setTimeout(function() {
+    var infowindow = new google.maps.InfoWindow({
+      content: title
+    });
+    var spot = new google.maps.Marker({
+      position: position,
+      map: map,
+      animation: google.maps.Animation.DROP,
+      title: title
+    });
+    spot.addListener('click', function() {
+      infowindow.open(map, spot);
+    });
+    markers.push(spot);
+  }, timeout);
+}
+
+function clearMarkers() {
+  for (var k = 0; k < markers.length; k++) {
+    markers[k].setMap(null);
+  }
+  markers = [];
+}
+  // var length = arr.length;
+  // for (var j = 0; j < length; j++) {
+  //   var marker = new google.maps.Marker({
+  //     position: arr[j][0],
+  //     map: map,
+  //     animation: google.maps.Animation.DROP,
+  //     title: arr[j][1]
+  //   });
+  // }
