@@ -1,7 +1,7 @@
 
 // Google maps api key = AIzaSyAu9tqAfwr9y_b4MUrI_Sg8iMbfIDe24Z0
 
-var lat, long, coordArr;
+var lat, long, coordArr, info;
 var markers = [];
 
 var $beerMe = $('button');
@@ -33,7 +33,7 @@ function getList(city, state) {
   // %26 is &
   var search = 'https://jsonp.afeld.me/?url=http%3A%2F%2Fapi.brewerydb.com%2Fv2%2Flocations%3Fkey%3D0d28b6999d59c70e170fb29165a647d2%26locality%3D' + city + '%26region%3D' + state;
   $.get(search, function(object) {
-    console.log(object);
+    // console.log(object);
     var brewArr = object.data;
     listing(brewArr);
   });
@@ -44,17 +44,16 @@ function listing(arr) {
   $list.empty();
   var length = arr.length;
   $list.append($('<h3>').text('Listings (' + length + ')'));
-  $list.append($('<hr>'));
   for (var i = 0; i < length; i++) {
     var brewNames = arr[i].brewery.name;
     var brewID = arr[i].breweryId;
     var type = arr[i].locationTypeDisplay;
     var address = arr[i].streetAddress;
     var zip = arr[i].postalCode;
+    $list.append($('<hr>'));
     $list.append($('<h4>').text(brewNames));
     $list.append($('<h6>').text(type));
     $list.append($('<p>').text(address + ' ' + zip));
-    $list.append($('<hr>'));
     var brewLat = arr[i].latitude;
     var brewLong = arr[i].longitude;
     var mapInfo = [{lat: brewLat, lng: brewLong}, brewNames];
@@ -71,6 +70,7 @@ function showMap(lat, long) {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   map = new google.maps.Map(mapCanvas, mapOptions);
+  info = new google.maps.InfoWindow();
   drop(coordArr);
 }
 
@@ -83,9 +83,6 @@ function drop(arr) {
 
 function addMarkerWithTimeout(position, title, timeout) {
   window.setTimeout(function() {
-    var infowindow = new google.maps.InfoWindow({
-      content: title
-    });
     var spot = new google.maps.Marker({
       position: position,
       map: map,
@@ -93,7 +90,8 @@ function addMarkerWithTimeout(position, title, timeout) {
       title: title
     });
     spot.addListener('click', function() {
-      infowindow.open(map, spot);
+      info.setContent(title);
+      info.open(map, spot);
     });
     markers.push(spot);
   }, timeout);
