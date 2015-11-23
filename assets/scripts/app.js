@@ -40,20 +40,23 @@ function getList(city, state) {
 }
 
 function listing(arr) {
+  var $total = $('.brew-total');
+  $total.empty();
   var $list = $('.brew-list');
   $list.empty();
   var length = arr.length;
-  $list.append($('<h3>').text('Listings (' + length + ')'));
+  $total.append($('<h4>').text('Listings (' + length + ')'));
   for (var i = 0; i < length; i++) {
     var brewNames = arr[i].brewery.name;
     var brewID = arr[i].breweryId;
     var type = arr[i].locationTypeDisplay;
     var address = arr[i].streetAddress;
     var zip = arr[i].postalCode;
+    var phone = arr[i].phone;
     $list.append($('<hr>'));
-    $list.append($('<h4>').text(brewNames));
-    $list.append($('<h6>').text(type));
-    $list.append($('<p>').text(address + ' ' + zip));
+    $list.append($('<h3>').text(brewNames));
+    $list.append($('<h5>').text(type));
+    $list.append($('<p>').html(address + ' ' + zip + '<br/>' + phone));
     var brewLat = arr[i].latitude;
     var brewLong = arr[i].longitude;
     var mapInfo = [{lat: brewLat, lng: brewLong}, brewNames];
@@ -76,8 +79,8 @@ function showMap(lat, long) {
 
 function drop(arr) {
   var length = arr.length;
-  for (var j = 0; j < length; j++) {
-    addMarkerWithTimeout(arr[j][0], arr[j][1], j * 75);
+  for (var i = 0; i < length; i++) {
+    addMarkerWithTimeout(arr[i][0], arr[i][1], i * 75);
   }
 }
 

@@ -1,4 +1,9 @@
 #map {
   width: 100%;
-  height: 66vh;
+  height: 75vh;
+}
+
+.brew-list {
+  max-height: 85vh;
+  overflow-y: auto;
 }
