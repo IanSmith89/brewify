@@ -1,6 +1,5 @@
 
-var lat, long, info, coordArr, printArr, beerArr, clickArr;
-var markers = [];
+var lat, long, info, printArr, beerArr;
 var $total = $('.brew-total');
 var $list = $('.brew-list');
 var $beerMe = $('button');
@@ -16,10 +15,9 @@ $beerMe.on('click', function(event) {
   $list.empty();
   $breweryDescription.empty();
   $breweryBeers.empty();
-  coordArr = [];
   printArr = [];
-  clickArr = [];
   beerArr = [];
+  markers = [];
   getLatLong(city, state);
 });
 
@@ -61,20 +59,58 @@ function extractBreweryInfo(arr) {
       var website = obj.brewery.website;
       var brewDescribe = obj.brewery.description;
       var brewImgObj = obj.brewery.images;
-      var inCaseOfClick = [brewDescribe, brewImgObj, breweryID, brewName];
-      clickArr.push(inCaseOfClick);
       var brewLat = obj.latitude;
       var brewLong = obj.longitude;
-      var mapInfo = [{lat: brewLat, lng: brewLong}, brewName, breweryID];
-      coordArr.push(mapInfo);
-      var breweryInfo = [brewName, breweryID, type, address, zip, phone, website, {lat: brewLat, lng: brewLong}];
+      var brewCoord = {lat: brewLat, lng: brewLong};
+      var breweryInfo = [brewName, breweryID, type, address, zip, phone, website, brewDescribe, brewImgObj, brewCoord];
       printArr.push(breweryInfo);
     }
   });
-  printInfo(printArr);
+  showMap(lat, long);
 }
 
-function printInfo(arr) {
+function showMap(lat, long) {
+  var mapCanvas = document.getElementById('map');
+  var mapOptions = {
+    center: new google.maps.LatLng(lat, long),
+    zoom: 13,
+    scrollwheel: false,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(mapCanvas, mapOptions);
+  info = new google.maps.InfoWindow();
+  drop(printArr);
+}
+
+function drop(arr) {
+  var length = arr.length;
+  for (var i = 0; i < length; i++) {
+    addMarkerWithTimeout(arr[i][9], arr[i][0], arr[i][1], i * 75);
+  }
+  printSearchResults(printArr, markers);
+}
+
+function addMarkerWithTimeout(position, title, id, timeout) {
+  window.setTimeout(function() {
+    var marker = new google.maps.Marker({
+      position: position,
+      map: map,
+      animation: google.maps.Animation.DROP,
+      title: title,
+      id: id
+    });
+    marker.addListener('click', function() {
+      $breweryDescription.empty();
+      $breweryBeers.empty();
+      showBreweryInfo(marker.id, printArr);
+      info.setContent(title);
+      info.open(map, marker);
+    });
+    markers.push(marker);
+  }, timeout);
+}
+
+function printSearchResults(arr, arr2) {
   var length = arr.length;
   $total.append($('<h4>').text('Listings (' + length + ')'));
   for (var i = 0; i < length; i++){
@@ -87,59 +123,19 @@ function printInfo(arr) {
     h3.on('click', function(event) {
       $breweryDescription.empty();
       $breweryBeers.empty();
-      showBreweryInfo(event.target.id, clickArr);
-      map.setZoom(15);
-      map.setCenter(arr[i][7]);
-      info.setContent(arr[i][0]);
-      info.setPosition(position);
-      info.open(map);
+      showBreweryInfo(event.target.id, printArr);
+      for (var i = 0; i < arr2.length; i++) {
+        if (event.target.id === arr2[i].id) {
+          info.setContent(arr[i][0]);
+          info.open(map, arr2[i]);
+          break;
+        }
+      }
     });
     $list.append(h3);
     $list.append($('<h5>').text(arr[i][2]));
     $list.append($('<p>').html(arr[i][3] + ' ' + arr[i][4] + '<br/>' + arr[i][6] + '<br/>' + arr[i][5]));
   }
-  showMap(lat, long);
-}
-
-function showMap(lat, long) {
-  var mapCanvas = document.getElementById('map');
-  var mapOptions = {
-    center: new google.maps.LatLng(lat, long),
-    zoom: 12,
-    draggable: false,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-  map = new google.maps.Map(mapCanvas, mapOptions);
-  info = new google.maps.InfoWindow();
-  drop(coordArr);
-}
-
-function drop(arr) {
-  var length = arr.length;
-  for (var i = 0; i < length; i++) {
-    addMarkerWithTimeout(arr[i][0], arr[i][1], arr[i][2], i * 75);
-  }
-}
-
-function addMarkerWithTimeout(position, title, id, timeout) {
-  window.setTimeout(function() {
-    var spot = new google.maps.Marker({
-      position: position,
-      map: map,
-      animation: google.maps.Animation.DROP,
-      title: title,
-      id: id
-    });
-    spot.addListener('click', function() {
-      $breweryDescription.empty();
-      $breweryBeers.empty();
-      showBreweryInfo(spot.id, clickArr);
-      map.panTo(position);
-      info.setContent(title);
-      info.open(map, spot);
-    });
-    markers.push(spot);
-  }, timeout);
 }
 
 // URL Encoding
@@ -158,15 +154,15 @@ function addMarkerWithTimeout(position, title, id, timeout) {
 
 function showBreweryInfo(id, objArr) {
   for (var i = 0; i < objArr.length; i++) {
-    if (id === objArr[i][2]) {
+    if (id === objArr[i][1]) {
       $breweryDescription.append($('<h3>').text("Here's the lowdown..."));
       $breweryDescription.append($('<img>', {
         class: 'img-responsive',
-        src: objArr[i][1].large
+        src: objArr[i][8].large
       }));
-      $breweryDescription.append($('<h2 class="text-center">').text(objArr[i][3]));
-      $breweryDescription.append($('<p>').text(objArr[i][0]));
-      getBeers(id);
+      $breweryDescription.append($('<h2 class="text-center">').text(objArr[i][0]));
+      $breweryDescription.append($('<p>').text(objArr[i][7]));
+      // getBeers(id);
       break;
     }
   }
