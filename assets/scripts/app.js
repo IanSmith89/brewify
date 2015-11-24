@@ -1,5 +1,5 @@
 
-var city, state, lat, long, info, googleMap, search, length, brewArr, coordArr, printArr, beerArr, clickArr, lrgImg;
+var lat, long, info, coordArr, printArr, beerArr, clickArr;
 var markers = [];
 var $total = $('.brew-total');
 var $list = $('.brew-list');
@@ -10,11 +10,10 @@ var $breweryBeers = $('.brewery-beers');
 
 $beerMe.on('click', function(event) {
   event.preventDefault();
-  city = $('#city').val();
-  state = $('#state').val();
+  var city = $('#city').val();
+  var state = $('#state').val();
   $total.empty();
   $list.empty();
-  $breweryImg.empty();
   $breweryDescription.empty();
   $breweryBeers.empty();
   coordArr = [];
@@ -22,20 +21,20 @@ $beerMe.on('click', function(event) {
   clickArr = [];
   beerArr = [];
   getLatLong(city, state);
-  getListings(city, state);
 });
 
 function getLatLong(city, state) {
-  googleMap = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + city + '&components=administrative_area:' + state + '&key=AIzaSyAu9tqAfwr9y_b4MUrI_Sg8iMbfIDe24Z0';
+  var googleMap = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + city + '&components=administrative_area:' + state + '&key=AIzaSyAu9tqAfwr9y_b4MUrI_Sg8iMbfIDe24Z0';
   $.get(googleMap, function(object) {
     lat = object.results[0].geometry.location.lat;
     long = object.results[0].geometry.location.lng;
   });
+  getListings(city, state);
 }
 
 function getListings(city, state) {
-  brewArr = [];
-  search = 'https://jsonp.afeld.me/?url=http%3A%2F%2Fapi.brewerydb.com%2Fv2%2Flocations%3Fkey%3D5d9d85e15c6f2c4014a61a35ba6b6dc0%26locality%3D' + city + '%26region%3D' + state;
+  var brewArr = [];
+  var search = 'https://jsonp.afeld.me/?url=http%3A%2F%2Fapi.brewerydb.com%2Fv2%2Flocations%3Fkey%3D0d28b6999d59c70e170fb29165a647d2%26locality%3D' + city + '%26region%3D' + state;
   $.get(search, function(object) {
     if (object.numberOfPages === 1) {
       brewArr = object.data;
@@ -51,32 +50,33 @@ function getListings(city, state) {
 }
 
 function extractBreweryInfo(arr) {
-  length = arr.length;
-  $total.append($('<h4>').text('Listings (' + length + ')'));
   arr.forEach(function(obj) {
-    var brewName = obj.brewery.name;
-    var breweryID = obj.brewery.id;
-    var type = obj.locationTypeDisplay;
-    var address = obj.streetAddress;
-    var zip = obj.postalCode;
-    var phone = obj.phone;
-    var website = obj.brewery.website;
-    var breweryInfo = [brewName, breweryID, type, address, zip, phone, website];
-    printArr.push(breweryInfo);
-    var brewDescribe = obj.brewery.description;
-    var brewImgObj = obj.brewery.images;
-    var inCaseOfClick = [brewDescribe, brewImgObj, breweryID, brewName];
-    clickArr.push(inCaseOfClick);
-    var brewLat = obj.latitude;
-    var brewLong = obj.longitude;
-    var mapInfo = [{lat: brewLat, lng: brewLong}, brewName, breweryID];
-    coordArr.push(mapInfo);
+    if (obj.isClosed === 'N' && obj.status === 'verified') {
+      var brewName = obj.brewery.name;
+      var breweryID = obj.brewery.id;
+      var type = obj.locationTypeDisplay;
+      var address = obj.streetAddress;
+      var zip = obj.postalCode;
+      var phone = obj.phone;
+      var website = obj.brewery.website;
+      var brewDescribe = obj.brewery.description;
+      var brewImgObj = obj.brewery.images;
+      var inCaseOfClick = [brewDescribe, brewImgObj, breweryID, brewName];
+      clickArr.push(inCaseOfClick);
+      var brewLat = obj.latitude;
+      var brewLong = obj.longitude;
+      var mapInfo = [{lat: brewLat, lng: brewLong}, brewName, breweryID];
+      coordArr.push(mapInfo);
+      var breweryInfo = [brewName, breweryID, type, address, zip, phone, website, {lat: brewLat, lng: brewLong}];
+      printArr.push(breweryInfo);
+    }
   });
   printInfo(printArr);
 }
 
 function printInfo(arr) {
   var length = arr.length;
+  $total.append($('<h4>').text('Listings (' + length + ')'));
   for (var i = 0; i < length; i++){
     $list.append($('<hr>'));
     var h3 = $('<h3>', {
@@ -84,16 +84,19 @@ function printInfo(arr) {
       class: 'brew-search',
       id: arr[i][1]
     });
-    h3.on('click', function(event){
-      // getBreweryInfoAndImg(event.target.id);
-      $breweryImg.empty();
+    h3.on('click', function(event) {
       $breweryDescription.empty();
       $breweryBeers.empty();
       showBreweryInfo(event.target.id, clickArr);
+      map.setZoom(15);
+      map.setCenter(arr[i][7]);
+      info.setContent(arr[i][0]);
+      info.setPosition(position);
+      info.open(map);
     });
     $list.append(h3);
     $list.append($('<h5>').text(arr[i][2]));
-    $list.append($('<p>').html(arr[i][3] + ' ' + arr[i][4] + '<br/>' + arr[i][5] + '<br/>' + arr[i][6]));
+    $list.append($('<p>').html(arr[i][3] + ' ' + arr[i][4] + '<br/>' + arr[i][6] + '<br/>' + arr[i][5]));
   }
   showMap(lat, long);
 }
@@ -103,6 +106,7 @@ function showMap(lat, long) {
   var mapOptions = {
     center: new google.maps.LatLng(lat, long),
     zoom: 12,
+    draggable: false,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   map = new google.maps.Map(mapCanvas, mapOptions);
@@ -113,11 +117,11 @@ function showMap(lat, long) {
 function drop(arr) {
   var length = arr.length;
   for (var i = 0; i < length; i++) {
-    addMarkerWithTimeout(arr[i][0], arr[i][1], i * 75, arr[i][2]);
+    addMarkerWithTimeout(arr[i][0], arr[i][1], arr[i][2], i * 75);
   }
 }
 
-function addMarkerWithTimeout(position, title, timeout, id) {
+function addMarkerWithTimeout(position, title, id, timeout) {
   window.setTimeout(function() {
     var spot = new google.maps.Marker({
       position: position,
@@ -127,10 +131,10 @@ function addMarkerWithTimeout(position, title, timeout, id) {
       id: id
     });
     spot.addListener('click', function() {
-      $breweryImg.empty();
       $breweryDescription.empty();
       $breweryBeers.empty();
       showBreweryInfo(spot.id, clickArr);
+      map.panTo(position);
       info.setContent(title);
       info.open(map, spot);
     });
@@ -152,63 +156,42 @@ function addMarkerWithTimeout(position, title, timeout, id) {
 // Brewify original key = 0d28b6999d59c70e170fb29165a647d2
 // "Tastify" key = 5d9d85e15c6f2c4014a61a35ba6b6dc0
 
-// function getBreweryInfoAndImg(brewID) {
-//   $breweryImg.empty();
-//   $breweryDescription.empty();
-//   $breweryBeers.empty();
-//   var brewDescription = 'https://jsonp.afeld.me/?url=http%3A%2F%2Fapi.brewerydb.com%2Fv2%2Fbrewery%2F' + brewID + '%3Fkey%3D5d9d85e15c6f2c4014a61a35ba6b6dc0';
-//   $.get(brewDescription, function(object) {
-//     // console.log(object);
-//     var description = object.data.description;
-//     var lrgImg = object.data.images.large;
-//     showBreweryInfo(description, lrgImg);
-//   });
-//   getBeers(brewID);
-// }
-
-// function showBreweryInfo(description, image) {
-//   $breweryDescription.append($('<h3>').text('Description'));
-//   $breweryDescription.append($('<p>').text(description));
-//   $breweryImg.append($('<h3>').text('Brewery'));
-//   $breweryImg.append($('<img>', {
-//     class: 'img-responsive',
-//     src: image
-//   }));
-// }
-
 function showBreweryInfo(id, objArr) {
-  objArr.forEach(function(arr) {
-    if (id === arr[2]) {
+  for (var i = 0; i < objArr.length; i++) {
+    if (id === objArr[i][2]) {
       $breweryDescription.append($('<h3>').text("Here's the lowdown..."));
       $breweryDescription.append($('<img>', {
         class: 'img-responsive',
-        src: arr[1].large
+        src: objArr[i][1].large
       }));
-      $breweryDescription.append($('<h2 class="text-center">').text(arr[3]));
-      $breweryDescription.append($('<p>').text(arr[0]));
+      $breweryDescription.append($('<h2 class="text-center">').text(objArr[i][3]));
+      $breweryDescription.append($('<p>').text(objArr[i][0]));
       getBeers(id);
+      break;
     }
-  });
+  }
 }
 
 function getBeers(brewID) {
   $breweryBeers.append($('<h3>').text('Beer List'));
-  var beerSearch = 'https://jsonp.afeld.me/?url=http%3A%2F%2Fapi.brewerydb.com%2Fv2%2Fbrewery%2F' + brewID + '%2Fbeers%3Fkey%3D5d9d85e15c6f2c4014a61a35ba6b6dc0';
-  $.get(beerSearch, function(object) {
-    beerArr = object.data;
+  var beerSearch = 'https://jsonp.afeld.me/?url=http%3A%2F%2Fapi.brewerydb.com%2Fv2%2Fbrewery%2F' + brewID + '%2Fbeers%3Fkey%3D0d28b6999d59c70e170fb29165a647d2';
+  $.get(beerSearch, function(obj) {
+    beerArr = obj.data;
     extractBeerListAndPrint(beerArr);
   });
 }
 
 function extractBeerListAndPrint(arr) {
   arr.forEach(function(obj) {
-    var beerName = obj.nameDisplay;
-    var beerStyle = obj.style.name;
-    var beerABV = obj.abv;
-    var beerIBU = obj.ibu;
-    $breweryBeers.append($('<hr>'));
-    $breweryBeers.append($('<h4>').text(beerName));
-    $breweryBeers.append($('<h5>').text(beerStyle));
-    $breweryBeers.append($('<p>').text(beerABV + '% ABV, ' + beerIBU + ' IBU'));
+    if (obj.status === 'verified') {
+      var beerName = obj.nameDisplay;
+      var beerStyle = obj.style.shortName;
+      var beerABV = obj.abv;
+      var beerIBU = obj.ibu;
+      $breweryBeers.append($('<hr>'));
+      $breweryBeers.append($('<h4>').text(beerName));
+      $breweryBeers.append($('<h5>').text(beerStyle));
+      $breweryBeers.append($('<p>').text(beerABV + '% ABV, ' + beerIBU + ' IBU'));
+    }
   });
 }
