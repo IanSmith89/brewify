@@ -15,6 +15,10 @@
   position: relative;
 }
 
+.brew-list h3:hover {
+  color: #584946;
+}
+
 .brew-total {
   background: rgba(232, 230, 229, 0.8);
   color: #7b0400;
