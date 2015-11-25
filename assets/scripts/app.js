@@ -1,11 +1,13 @@
-
-var lat, long, info, printArr, beerArr;
+var lat, long, info;
 var $total = $('.brew-total');
 var $list = $('.brew-list');
 var $beerMe = $('button');
-var $breweryImg = $('.brewery-img');
 var $breweryDescription = $('.brewery-description');
 var $breweryBeers = $('.brewery-beers');
+var $brewInfoCard = $('.brew-info-card');
+
+// $beerMe.on('click', function() {
+// });
 
 $beerMe.on('click', function(event) {
   event.preventDefault();
@@ -73,7 +75,7 @@ function showMap(lat, long) {
   var mapCanvas = document.getElementById('map');
   var mapOptions = {
     center: new google.maps.LatLng(lat, long),
-    zoom: 13,
+    zoom: 14,
     scrollwheel: false,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
@@ -102,9 +104,11 @@ function addMarkerWithTimeout(position, title, id, timeout) {
     marker.addListener('click', function() {
       $breweryDescription.empty();
       $breweryBeers.empty();
-      showBreweryInfo(marker.id, printArr);
+      map.panTo(position);
+      // map.setZoom(15); Need to figure out a smooth zoom function
       info.setContent(title);
       info.open(map, marker);
+      showBreweryInfo(marker.id, printArr);
     });
     markers.push(marker);
   }, timeout);
@@ -117,24 +121,25 @@ function printSearchResults(arr, arr2) {
     $list.append($('<hr>'));
     var h3 = $('<h3>', {
       text: arr[i][0],
-      class: 'brew-search',
       id: arr[i][1]
     });
     h3.on('click', function(event) {
       $breweryDescription.empty();
       $breweryBeers.empty();
-      showBreweryInfo(event.target.id, printArr);
       for (var i = 0; i < arr2.length; i++) {
         if (event.target.id === arr2[i].id) {
+          map.panTo(arr[i][9]);
+          // map.setZoom(15);
           info.setContent(arr[i][0]);
           info.open(map, arr2[i]);
           break;
         }
       }
+      showBreweryInfo(event.target.id, printArr);
     });
     $list.append(h3);
     $list.append($('<h5>').text(arr[i][2]));
-    $list.append($('<p>').html(arr[i][3] + ' ' + arr[i][4] + '<br/>' + arr[i][6] + '<br/>' + arr[i][5]));
+    $list.append($('<p>').html(arr[i][3] + ' ' + arr[i][4] + '<br/><a href="' + arr[i][6] + '" target="_blank">' + arr[i][6] + '</a><br/>' + arr[i][5]));
   }
 }
 
@@ -146,30 +151,31 @@ function printSearchResults(arr, arr2) {
 // %26 is &
 // %3F is ?
 
-// Odells ID = rQkKIB
-
 // Google maps api key = AIzaSyAu9tqAfwr9y_b4MUrI_Sg8iMbfIDe24Z0
 // Brewify original key = 0d28b6999d59c70e170fb29165a647d2
 // "Tastify" key = 5d9d85e15c6f2c4014a61a35ba6b6dc0
 
 function showBreweryInfo(id, objArr) {
+  $brewInfoCard.addClass('well well sm');
   for (var i = 0; i < objArr.length; i++) {
     if (id === objArr[i][1]) {
       $breweryDescription.append($('<h3>').text("Here's the lowdown..."));
+      $breweryDescription.append($('<hr>'));
       $breweryDescription.append($('<img>', {
         class: 'img-responsive',
         src: objArr[i][8].large
       }));
+      $breweryDescription.append($('<hr>'));
       $breweryDescription.append($('<h2 class="text-center">').text(objArr[i][0]));
-      $breweryDescription.append($('<p>').text(objArr[i][7]));
-      // getBeers(id);
+      $breweryDescription.append($('<p class="short-description">').text(objArr[i][7]));
+      getBeers(id);
       break;
     }
   }
 }
 
 function getBeers(brewID) {
-  $breweryBeers.append($('<h3>').text('Beer List'));
+  $breweryBeers.append($('<h3>').text("Here's the beer..."));
   var beerSearch = 'https://jsonp.afeld.me/?url=http%3A%2F%2Fapi.brewerydb.com%2Fv2%2Fbrewery%2F' + brewID + '%2Fbeers%3Fkey%3D0d28b6999d59c70e170fb29165a647d2';
   $.get(beerSearch, function(obj) {
     beerArr = obj.data;

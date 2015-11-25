@@ -5,179 +5,200 @@
     <title>Brewify | Brewery Locator</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Neuton:400,700,800|Open+Sans:400,600,700">
     <link rel="stylesheet" type="text/css" href="assets/styles/style.css" />
   </head>
   <body>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-6">
-          <h1>BREWIFY</h1>
-        </div>
-        <div class="col-md-6">
-          <div>
-            <label for="city">City:</label>
-            <input id="city" type="text" name="city" placeholder="Enter your current city..."/>
-            <label for="state">State:</label>
-            <select id="state" name="state">
-              <option>
-                Alabama
-              </option>
-              <option>
-                Alaska
-              </option>
-              <option>
-                Arizona
-              </option>
-              <option>
-                Arkansas
-              </option>
-              <option>
-                California
-              </option>
-              <option>
-                Colorado
-              </option>
-              <option>
-                Connecticut
-              </option>
-              <option>
-                Delaware
-              </option>
-              <option>
-                Florida
-              </option>
-              <option>
-                Georgia
-              </option>
-              <option>
-                Hawaii
-              </option>
-              <option>
-                Idaho
-              </option>
-              <option>
-                Illinois
-              </option>
-              <option>
-                Indiana
-              </option>
-              <option>
-                Iowa
-              </option>
-              <option>
-                Kansas
-              </option>
-              <option>
-                Kentucky
-              </option>
-              <option>
-                Louisiana
-              </option>
-              <option>
-                Maine
-              </option>
-              <option>
-                Maryland
-              </option>
-              <option>
-                Massachusetts
-              </option>
-              <option>
-                Michigan
-              </option>
-              <option>
-                Minnesota
-              </option>
-              <option>
-                Mississippi
-              </option>
-              <option>
-                Missouri
-              </option>
-              <option>
-                Montana
-              </option>
-              <option>
-                Nebraska
-              </option>
-              <option>
-                Nevada
-              </option>
-              <option>
-                New Hampshire
-              </option>
-              <option>
-                New Jersey
-              </option>
-              <option>
-                New Mexico
-              </option>
-              <option>
-                New York
-              </option>
-              <option>
-                North Carolina
-              </option>
-              <option>
-                North Dakota
-              </option>
-              <option>
-                Ohio
-              </option>
-              <option>
-                Oklahoma
-              </option>
-              <option>
-                Oregon
-              </option>
-              <option>
-                Pennsylvania
-              </option>
-              <option>
-                Rhose Island
-              </option>
-              <option>
-                South Carolina
-              </option>
-              <option>
-                South Dakota
-              </option>
-              <option>
-                Tennessee
-              </option>
-              <option>
-                Texas
-              </option>
-              <option>
-                Utah
-              </option>
-              <option>
-                Vermont
-              </option>
-              <option>
-                Virginia
-              </option>
-              <option>
-                Washington
-              </option>
-              <option>
-                West Virginia
-              </option>
-              <option>
-                Wisconsin
-              </option>
-              <option>
-                Wyoming
-              </option>
-            </select>
-            <button type="submit">BEER ME</button>
+        <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="container">
+            <div class="col-md-3 navbar-header">
+              <div class="row">
+                <div class="col-md-8">
+                  <h1>Brewify</h1>
+                </div>
+                <div class="col-md-4 subtitle">
+                  <h6><em>BREWERY LOCATOR</em></h6>
+                  <h4><em>v1.0</em></h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-offset-1 col-md-8 navbar-left">
+              <form class="navbar-form" role="search">
+                <div class="form-group">
+                  <label for="city">City:</label>
+                  <input id="city" type="text" class="form-control" name="city" placeholder="Find breweries here..."/>
+                  <label for="state">State:</label>
+                  <select id="state" class="form-control" name="state">
+                    <optgroup label="Choose State">
+                      <option>
+                        Alabama
+                      </option>
+                      <option>
+                        Alaska
+                      </option>
+                      <option>
+                        Arizona
+                      </option>
+                      <option>
+                        Arkansas
+                      </option>
+                      <option>
+                        California
+                      </option>
+                      <option>
+                        Colorado
+                      </option>
+                      <option>
+                        Connecticut
+                      </option>
+                      <option>
+                        Delaware
+                      </option>
+                      <option>
+                        Florida
+                      </option>
+                      <option>
+                        Georgia
+                      </option>
+                      <option>
+                        Hawaii
+                      </option>
+                      <option>
+                        Idaho
+                      </option>
+                      <option>
+                        Illinois
+                      </option>
+                      <option>
+                        Indiana
+                      </option>
+                      <option>
+                        Iowa
+                      </option>
+                      <option>
+                        Kansas
+                      </option>
+                      <option>
+                        Kentucky
+                      </option>
+                      <option>
+                        Louisiana
+                      </option>
+                      <option>
+                        Maine
+                      </option>
+                      <option>
+                        Maryland
+                      </option>
+                      <option>
+                        Massachusetts
+                      </option>
+                      <option>
+                        Michigan
+                      </option>
+                      <option>
+                        Minnesota
+                      </option>
+                      <option>
+                        Mississippi
+                      </option>
+                      <option>
+                        Missouri
+                      </option>
+                      <option>
+                        Montana
+                      </option>
+                      <option>
+                        Nebraska
+                      </option>
+                      <option>
+                        Nevada
+                      </option>
+                      <option>
+                        New Hampshire
+                      </option>
+                      <option>
+                        New Jersey
+                      </option>
+                      <option>
+                        New Mexico
+                      </option>
+                      <option>
+                        New York
+                      </option>
+                      <option>
+                        North Carolina
+                      </option>
+                      <option>
+                        North Dakota
+                      </option>
+                      <option>
+                        Ohio
+                      </option>
+                      <option>
+                        Oklahoma
+                      </option>
+                      <option>
+                        Oregon
+                      </option>
+                      <option>
+                        Pennsylvania
+                      </option>
+                      <option>
+                        Rhode Island
+                      </option>
+                      <option>
+                        South Carolina
+                      </option>
+                      <option>
+                        South Dakota
+                      </option>
+                      <option>
+                        Tennessee
+                      </option>
+                      <option>
+                        Texas
+                      </option>
+                      <option>
+                        Utah
+                      </option>
+                      <option>
+                        Vermont
+                      </option>
+                      <option>
+                        Virginia
+                      </option>
+                      <option>
+                        Washington
+                      </option>
+                      <option>
+                        West Virginia
+                      </option>
+                      <option>
+                        Wisconsin
+                      </option>
+                      <option>
+                        Wyoming
+                      </option>
+                    </optgroup>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-default">BEER ME</button>
+              </form>
+            </div>
           </div>
+        </nav>
+      </div>
+      <div class="row">
+        <div class="md-col-12" id="map">
         </div>
       </div>
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3 search-results">
           <div class="row">
-            <div class="col-md-12 brew-total">
+            <div class="col-md-5 brew-total">
             </div>
           </div>
           <div class="row">
@@ -185,17 +206,9 @@
             </div>
           </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-offset-1 col-md-7 brew-info-card">
           <div class="row">
-            <div class="col-md-12">
-              <div id="map">
-              </div>
-            </div>
-            <div class="col-md-8">
-              <div class="row">
-                <div class="col-md-12 brewery-description">
-                </div>
-              </div>
+            <div class="col-md-8 brewery-description">
             </div>
             <div class="col-md-4 brewery-beers">
             </div>
