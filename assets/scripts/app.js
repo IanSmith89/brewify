@@ -6,9 +6,6 @@ var $breweryDescription = $('.brewery-description');
 var $breweryBeers = $('.brewery-beers');
 var $brewInfoCard = $('.brew-info-card');
 
-// $beerMe.on('click', function() {
-// });
-
 $beerMe.on('click', function(event) {
   event.preventDefault();
   var city = $('#city').val();
