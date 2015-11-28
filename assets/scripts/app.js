@@ -29,6 +29,14 @@ function getLatLong(city, state) {
   getListings(city, state);
 }
 
+// URL Encoding for search
+// %3D is =
+// %3A is :
+// %2F is /
+// + is space
+// %26 is &
+// %3F is ?
+
 function getListings(city, state) {
   var brewArr = [];
   var search = 'https://jsonp.afeld.me/?url=http%3A%2F%2Fapi.brewerydb.com%2Fv2%2Flocations%3Fkey%3D0d28b6999d59c70e170fb29165a647d2%26locality%3D' + city + '%26region%3D' + state;
@@ -139,18 +147,6 @@ function printSearchResults(arr, arr2) {
     $list.append($('<p>').html(arr[i][3] + ' ' + arr[i][4] + '<br/><a href="' + arr[i][6] + '" target="_blank">' + arr[i][6] + '</a><br/>' + arr[i][5]));
   }
 }
-
-// URL Encoding
-// %3D is =
-// %3A is :
-// %2F is /
-// + is space
-// %26 is &
-// %3F is ?
-
-// Google maps api key = AIzaSyAu9tqAfwr9y_b4MUrI_Sg8iMbfIDe24Z0
-// Brewify original key = 0d28b6999d59c70e170fb29165a647d2
-// "Tastify" key = 5d9d85e15c6f2c4014a61a35ba6b6dc0
 
 function showBreweryInfo(id, objArr) {
   $brewInfoCard.addClass('well well sm');
