@@ -6,6 +6,14 @@ var $breweryDescription = $('.brewery-description');
 var $breweryBeers = $('.brewery-beers');
 var $brewInfoCard = $('.brew-info-card');
 
+// URL Encoding for search
+// %3D is =
+// %3A is :
+// %2F is /
+// + is space
+// %26 is &
+// %3F is ?
+
 $beerMe.on('click', function(event) {
   event.preventDefault();
   var city = $('#city').val();
@@ -28,14 +36,6 @@ function getLatLong(city, state) {
   });
   getListings(city, state);
 }
-
-// URL Encoding for search
-// %3D is =
-// %3A is :
-// %2F is /
-// + is space
-// %26 is &
-// %3F is ?
 
 function getListings(city, state) {
   var brewArr = [];
