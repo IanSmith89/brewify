@@ -3,6 +3,8 @@ Brewify is a brewery locator app. Users can enter the city and state where theyâ
 
 One goal for the future is to add a search parameter based on specific beer types. For example, if users want results only listing breweries that make a sour or a pale ale etc.
 
-<img src="Brewify_screenShot2.png" />
+![Image of screenshot two]
+(Brewify_screenShot2.png)
 
-<img src="Brewify_screenShot.png" />
+![Image of screenshot one]
+(Brewify_screenShot.png)
