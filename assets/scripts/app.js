@@ -1,4 +1,4 @@
-var lat, long, info;
+var lat, long, info, printArr, beerArr, markers, map;
 var $total = $('.brew-total');
 var $list = $('.brew-list');
 var $beerMe = $('button');
